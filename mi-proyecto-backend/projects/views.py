@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Project, Activity
 from .serializers import ProjectSerializer, ActivitySerializer
 
-# --- Vista para Proyectos (sin cambios) ---
+# --- Vista para Proyectos
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -13,7 +13,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-# --- Vista para Actividades (sin cambios) ---
+# --- Vista para Actividades
 class ActivityViewSet(viewsets.ModelViewSet):
     serializer_class = ActivitySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -25,7 +25,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         project = Project.objects.get(pk=project_pk)
         serializer.save(project=project)
 
-# --- VISTA DEL DASHBOARD (ACTUALIZADA) ---
+# --- Vista para DASHBOARD
 class DashboardStatsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -33,13 +33,12 @@ class DashboardStatsView(APIView):
         user_projects = Project.objects.filter(owner=request.user)
         user_activities = Activity.objects.filter(project__in=user_projects)
 
-        # --- Realizamos todos los cálculos ---
         total_projects = user_projects.count()
         total_activities = user_activities.count()
         completed_activities = user_activities.filter(status='COMPLETADA').count()
         pending_activities = user_activities.filter(status='PENDIENTE').count()
         
-        # Preparamos todos los datos que vamos a devolver
+        # Datos que vamos a devolver
         stats_data = {
             'total_projects': total_projects,
             'total_activities': total_activities,

@@ -14,7 +14,6 @@ class Project(models.Model):
         return self.title
 
 class Activity(models.Model):
-    # --- ¡NUEVO CAMPO DE ESTADO! ---
     class Status(models.TextChoices):
         PENDIENTE = 'PENDIENTE', 'Pendiente'
         EN_PROGRESO = 'EN_PROGRESO', 'En Progreso'
@@ -27,8 +26,6 @@ class Activity(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     
-    # Añadimos el campo 'status' a la base de datos.
-    # Por defecto, todas las actividades nuevas serán 'PENDIENTE'.
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
