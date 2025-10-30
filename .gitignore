@@ -1,0 +1,15 @@
+# Python Environment and Cache
+venv/
+__pycache__/
+*.pyc
+
+# Django Database
+db.sqlite3
+
+# Node.js Dependencies (Frontend)
+/mi-proyecto-frontend/node_modules/
+/mi-proyecto-frontend/.vite/
+/mi-proyecto-frontend/dist/
+
+# Pytest Cache
+.pytest_cache/
