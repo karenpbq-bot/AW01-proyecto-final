@@ -1,0 +1,430 @@
+{
+	"info": {
+		"_postman_id": "a7e123af-948e-4327-88fe-89fba14e69de",
+		"name": "AW01 - Auth y Proyectos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49928362",
+		"_collection_link": "https://karenpbq-18852.postman.co/workspace/b0a7138c-b627-41be-8607-1d9a3b2cdfd6/collection/49928362-a7e123af-948e-4327-88fe-89fba14e69de?action=share&source=collection_link&creator=49928362"
+	},
+	"item": [
+		{
+			"name": "Obtener Token JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Dentro de la pestaña Tests de \"Obtener Token JWT\"\r",
+							"\r",
+							"pm.test(\"Guarda el token de acceso JWT\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var token = jsonData.access; \r",
+							"    \r",
+							"    // CRUCIAL: Solo guardar en pm.environment.set\r",
+							"    pm.environment.set(\"jwt_token\", token); \r",
+							"     \r",
+							"    pm.expect(jsonData.access).to.be.a('string');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"Tania\",\r\n  \"password\": \"Yerusa03\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/token/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Proyectos CRUD",
+			"item": [
+				{
+					"name": "Lista de Proyectos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code es 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La respuesta es una lista (array)\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    // Verifica que la respuesta tenga el formato de una lista\r",
+									"    pm.expect(Array.isArray(jsonData.results || jsonData)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/projects/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"projects",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nuevo proyecto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Petición: Crear nuevo proyecto (Pestaña Tests)\r",
+									"\r",
+									"// 1. Verificación básica del Status Code\r",
+									"pm.test(\"Status code es 201 Created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// 2. Bloque CRÍTICO para guardar la variable 'proyecto_id'\r",
+									"var jsonData = pm.response.json();\r",
+									"const id_key = 'id'; // CLAVE CORRECTA SEGÚN TU API\r",
+									"\r",
+									"// Si la respuesta tiene una propiedad 'id', la guardamos\r",
+									"if (jsonData && jsonData[id_key]) {\r",
+									"    // Guardar el ID en la variable Global para que las siguientes peticiones lo lean\r",
+									"    pm.environment.set(\"proyecto_id\", jsonData[id_key]);\r",
+									"    \r",
+									"    // Test para verificar que el ID se guardó (este test fallaba antes)\r",
+									"    pm.test(\"Guarda el ID del proyecto creado\", function () {\r",
+									"        pm.expect(pm.globals.get(\"proyecto_id\")).to.be.ok;\r",
+									"    });\r",
+									"} else {\r",
+									"    // Si la clave 'id' no está (lo cual no debería pasar ahora), forzamos el fallo\r",
+									"    pm.test(\"ERROR: No se encontró la clave '\" + id_key + \"' en la respuesta JSON\", function () {\r",
+									"        pm.expect(jsonData[id_key]).to.be.ok; \r",
+									"    });\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Proyecto Integracion - TEST\",\r\n    \"description\": \"Este proyecto sera creado y actualizado por Newman.\",\r\n    \"start_date\": \"2025-12-01\",\r\n    \"end_date\": \"2025-12-30\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/projects/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"projects",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Proyecto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code es 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El título ha sido actualizado\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.title).to.eql(\"Proyecto Integracion (ACTUALIZADO)\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Proyecto Integracion (ACTUALIZADO)\",\r\n    \"description\": \"Descripcion modificada por la prueba PUT.\",\r\n    \"start_date\": \"2025-12-01\",\r\n    \"end_date\": \"2026-01-15\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/projects/{{proyecto_id}}/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"projects",
+								"{{proyecto_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Proyecto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code es 204 No Content (Eliminado)\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/projects/{{proyecto_id}}/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"projects",
+								"{{proyecto_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"// Este script se ejecuta ANTES de cada solicitud en la colección.\r",
+					"// Inyecta el token en el encabezado si existe a nivel GLOBAL,\r",
+					"// y omite la inyección para el Login (que no lo necesita).\r",
+					"\r",
+					"if (pm.info.requestName !== 'Obtener Token JWT') {\r",
+					"    \r",
+					"    // Obtener el token de la variable GLOBAL\r",
+					"    const token = pm.globals.get(\"jwt_token\");\r",
+					"\r",
+					"    if (token) {\r",
+					"        pm.request.headers.add({\r",
+					"            key: 'Authorization',\r",
+					"            value: `Bearer ${token}`\r",
+					"        });\r",
+					"    }\r",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "jwt_token",
+			"value": ""
+		}
+	]
+}

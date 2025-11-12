@@ -12,7 +12,8 @@ import CreateUser from './CreateUser';
 import CronogramaPage from './pages/CronogramaPage'; 
 import './index.css';
 
-// Hook de autenticación (sin cambios)
+// --- CORRECCIÓN CLAVE: NO HAY IMPORTACIÓN DE AXIOS AQUÍ ---
+
 function useAuth() {
     const [token, setToken] = React.useState(null);
     const [isLoading, setIsLoading] = React.useState(true);
@@ -25,6 +26,7 @@ function useAuth() {
         setIsLoading(false);
     }, []);
 
+    // Esta función es llamada por Login.jsx para guardar el token
     const handleLoginSuccess = (newToken) => {
         localStorage.setItem('authToken', newToken);
         setToken(newToken);
@@ -33,7 +35,6 @@ function useAuth() {
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         setToken(null);
-        // Usamos window.location.href para forzar la recarga
         window.location.href = '/login'; 
     };
 
@@ -43,6 +44,7 @@ function useAuth() {
 function App() {
     const { token, isLoading, handleLoginSuccess, handleLogout } = useAuth();
 
+    // Bloquea la renderización mientras se verifica el token para evitar parpadeos
     if (isLoading) {
         return null; 
     }
@@ -53,7 +55,6 @@ function App() {
                 {token ? (
                     // --- RUTAS PROTEGIDAS (USUARIO LOGUEADO) ---
                     <>
-                        {/* Rutas que usan el Layout principal (estas aún necesitan handleLogout) */}
                         <Route element={<Layout handleLogout={handleLogout} />}>
                             <Route path="/" element={<Home />} />
                             <Route path="/projects" element={<ProjectList />} />
@@ -64,21 +65,18 @@ function App() {
                             <Route path="/login" element={<Navigate to="/" replace />} /> 
                         </Route>
 
-                        {/* --- RUTAS DE PÁGINA COMPLETA (CORREGIDAS: SIN LA PROP handleLogout) --- */}
-                        {/* CreateProject es autónomo */}
-                        <Route path="/create" element={<CreateProject />} /> 
-                        
-                        {/* Las otras rutas DEBEN mantener la prop si su Header NO es autónomo */}
+                        {/* --- RUTAS DE PÁGINA COMPLETA --- */}
+                        <Route path="/create" element={<CreateProject />} />
                         <Route path="/projects/:projectId" element={<ProjectDetail handleLogout={handleLogout} />} />
                         <Route path="/users/create" element={<CreateUser handleLogout={handleLogout} />} /> 
                         <Route path="/projects/:projectId/cronograma" element={<CronogramaPage handleLogout={handleLogout} />} /> 
                         
-                        {/* Catch-all para cualquier ruta protegida desconocida */}
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </>
                 ) : (
                     // --- Rutas NO PROTEGIDAS (USUARIO SIN LOGUEAR) ---
                     <>
+                        {/* El Login llama a onLoginSuccess después de guardar y antes de recargar */}
                         <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
                         <Route path="*" element={<Navigate to="/login" replace />} />
                     </>

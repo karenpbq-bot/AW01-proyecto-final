@@ -1,0 +1,21 @@
+{
+	"id": "5bf4ac61-3b7f-4959-81b7-a45b37da51ab",
+	"values": [
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "proyecto_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2025-11-12T03:44:11.201Z",
+	"_postman_exported_using": "Postman/11.71.2"
+}

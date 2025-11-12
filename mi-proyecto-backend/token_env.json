@@ -1,0 +1,21 @@
+{
+	"id": "6e506671-c9b9-4f86-9140-7015c5c067ab",
+	"name": "Newman-Token-Env",
+	"values": [
+		{
+			"key": "jwt_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYyODc2NDMzLCJpYXQiOjE3NjI4NzYxMzMsImp0aSI6ImUxYTY2ZDQ4YTFiMjRiMGM4MDg5MGU5ZDE5MjE2ZGI0IiwidXNlcl9pZCI6IjEifQ.YJwVdQa6dA7HyUms7KvCCm5Vic4yZtTxfl18PpJXi4k",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "proyecto_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-11-12T03:47:43.307Z",
+	"_postman_exported_using": "Postman/11.71.2"
+}

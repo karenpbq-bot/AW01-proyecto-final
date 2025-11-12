@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from './api/axiosInstance';
 
 // --- NUEVO COMPONENTE: EditUserForm (CORREGIDO) ---
 function EditUserForm({ user, onUserUpdated, onCancel }) {

@@ -130,8 +130,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-# --- CONFIGURACIÓN DE DJANGO REST FRAMEWORK ---
-# Este bloque soluciona el error de permisos 403.
 REST_FRAMEWORK = {
     # Política de permisos por defecto:
     # Solo los usuarios autenticados pueden acceder a la API.
@@ -139,8 +137,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     # Clase de autenticación por defecto:
-    # Usaremos JWT (JSON Web Tokens) para verificar la identidad del usuario.
+    # Aseguramos que la sesión de Django Admin esté activa para pruebas manuales
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # <-- Añadir esta línea de vuelta
     ],
 }

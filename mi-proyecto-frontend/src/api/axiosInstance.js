@@ -1,9 +1,9 @@
 // mi-proyecto-frontend/src/api/axiosInstance.js
 
-import axios from 'axios';
+import axios from 'axios'; // <-- CORRECCIÓN: Importa la librería base 'axios' directamente
 
 const axiosInstance = axios.create({
-    // Definimos la URL base para simplificar futuras peticiones
+    // URL base de tu API Django
     baseURL: 'http://127.0.0.1:8000/api/', 
     timeout: 5000, 
 });
@@ -21,16 +21,20 @@ axiosInstance.interceptors.request.use(
     error => Promise.reject(error)
 );
 
-// --- Interceptor de Respuestas (Manejo del 401 Expirado) ---
+// --- Interceptor de Respuestas: Manejo del 401 (CRÍTICO) ---
 axiosInstance.interceptors.response.use(
     response => response,
     error => {
-        // Si el token expira o es inválido, redirige al login
+        // Chequea si el error es 401 (Unauthorized) y que NO estemos en la ruta de token
         if (error.response && error.response.status === 401 && !error.config.url.includes('token')) {
+            
             console.error("Token expirado o no autorizado. Redirigiendo a Login.");
+            
+            // Acción: Borrar token corrupto y forzar la redirección
             localStorage.removeItem('authToken');
-            // Forzamos la redirección ya que no podemos usar useNavigate aquí
             window.location.href = '/login'; 
+            
+            // Rechazamos la promesa para evitar que el error siga a los componentes
             return new Promise(() => {}); 
         }
         return Promise.reject(error); 
